@@ -52,7 +52,8 @@ namespace product.Controllers
         public async Task<ActionResult<List<Product>>> AddProduct(Product product)
         {
             products.Add(product);
-            return Ok(product);
+            return Created(new Uri($"{Request.Path}/{product.Id}", UriKind.Relative), product);
+            // return StatusCode(StatusCodes.Status201Created, product);
         }
 
 
@@ -83,7 +84,7 @@ namespace product.Controllers
                 return NotFound("Product not found!");
 
             products.Remove(product);
-            return Ok(product);
+            return Ok(null);
         }
 
     }
