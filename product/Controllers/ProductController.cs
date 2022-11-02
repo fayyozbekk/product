@@ -8,18 +8,7 @@ namespace product.Controllers
     public class productController : ControllerBase
     {
 
-        private static List<Product> products = new List<Product>
-            {
-                new Product {
-                    Id = 1,
-                    Name = "IPhone",
-                    Category = "Phones",
-                    Description = "Iphone. This is madeby Apple."
-               }
-           };
-
-
-
+  
         private readonly DataContext _context;
 
 
@@ -27,10 +16,6 @@ namespace product.Controllers
         {
             _context = context;
         }
-
-
-
-
 
 
 
@@ -42,9 +27,6 @@ namespace product.Controllers
 
 
 
-
-
-
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> Get(int id)
         {   
@@ -53,9 +35,6 @@ namespace product.Controllers
                 return NotFound("Product not found!");
             return Ok(product);
         }
-
-
-
 
 
 
