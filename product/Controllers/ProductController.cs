@@ -20,13 +20,24 @@ namespace product.Controllers
 
 
 
+        private readonly DataContext _context;
+
+
+        public productController(DataContext context)
+        {
+            _context = context;
+        }
+
+
+
+
 
 
 
         [HttpGet]
         public async Task<ActionResult<List<Product>>> Get()
         {
-            return Ok(products);
+            return Ok(await _context.Products.ToListAsync());
         }
 
 
@@ -37,7 +48,7 @@ namespace product.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Product>> Get(int id)
         {   
-            var product = products.Find(x => x.Id == id);
+            var product =  _context.Products.FindAsync(id);
             if(product == null)
                 return NotFound("Product not found!");
             return Ok(product);
@@ -51,7 +62,10 @@ namespace product.Controllers
         [HttpPost]
         public async Task<ActionResult<List<Product>>> AddProduct(Product product)
         {
-            products.Add(product);
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync(); 
+            
+
             return Created(new Uri($"{Request.Path}/{product.Id}", UriKind.Relative), product);
             // return StatusCode(StatusCodes.Status201Created, product);
         }
@@ -63,13 +77,15 @@ namespace product.Controllers
         public async Task<ActionResult<List<Product>>> UpdateProduct(int id, Product request)
         {
 
-            var product = products.Find(x => x.Id == id);
+            var product = await _context.Products.FindAsync(id);
             if (product == null)
                 return NotFound("Product not found!");
 
             product.Name = request.Name;    
             product.Category = request.Category;
             product.Description = request.Description;
+
+            await _context.SaveChangesAsync();
 
             return Ok(product);
         }
@@ -79,12 +95,15 @@ namespace product.Controllers
         [HttpDelete("{id}")]
         public async Task<ActionResult<Product>> DeleteProduct(int id)
         {
-            var product = products.Find(x => x.Id == id);
+            var product = await _context.Products.FindAsync(id);
             if (product == null)
                 return NotFound("Product not found!");
 
-            products.Remove(product);
-            return Ok(null);
+            _context.Products.Remove(product);
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Deleted successfully");
         }
 
     }
